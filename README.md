@@ -114,7 +114,8 @@ Render the productions view which is a simple bulleted layout.
 *  **Content-Type:** `text/html`
 
 # Todos
-- Response parsing performance
+- Unit tests
+- Response parsing performance benchmarking
 - HTTP request caching
 - HTTP client env variables for config
 - Optional from / to parameters with min / max constraints
