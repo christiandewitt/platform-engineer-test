@@ -1,66 +1,120 @@
-# Platform Engineering Test
+# Reconnect Backend Test
 
-Depending on the position you are applying for, there are two options for this test: 
+Backend test solution prepared by Christian de Witt
 
-1. PHP only
-2. PHP and AWS
+# Reviewer Notes
+The following rules/filters are applied to the data set:
+- Data is sanitized with unused fields removed
+- Duplicates are removed using "strict" rules
+- Grouped on “Title” with site and shoot times aggregated into a collection
 
-## General Instructions
+**Please note:**
+The URI to the movies data source is currently set to a static JSON file as provided for the test
+- The ABQ API is down or timing out and
 
-1. Fork this repo.
-2. Make the changes needed to accomplish what is listed below.
-3. Deploy this somewhere and send us a link to the deployed app and the repo, then we can schedule some time to meet!
+# Environmental Variables
+Environmental Variables that need to be set:
 
-### PHP Requirements
+| Variable | Description |
+| ------ | ------ |
+| PRODUCTIONS_API_URI | URI to the productions data source |
 
-In this exercise, we're asking you to: **Create a filter for productions based on start date and end date.**
+**Please note:**
+- There is an .env.example file
 
-**Requirements:**
+# Endpoints
 
-1) Create an endpoint that:
+Endpoints available for use:
 
-- Fetches data from the [ABQ Film Office public dataset](https://coagisweb.cabq.gov/arcgis/rest/services/public/FilmLocations/MapServer/0/query?where=1%3D1&text=&objectIds=&time=&geometry=&geometryType=esriGeometryEnvelope&inSR=&spatialRel=esriSpatialRelIntersects&relationParam=&outFields=*&returnGeometry=true&maxAllowableOffset=&geometryPrecision=&outSR=4326&returnIdsOnly=false&returnCountOnly=false&orderByFields=&groupByFieldsForStatistics=&outStatistics=&returnZ=false&returnM=false&gdbVersion=&f=pjson). This data is a collection of locations where Films/TV/etc have been shot. Documentation found [here](http://data.cabq.gov/business/filmlocations/MetaData.pdf). 
-- Filters data on shoot start date and end date -- please use PHP to do this and not the api endpoint
-- Adjusts for your timezone
-- Filters out duplicate productions
-- Returns JSON data
+**Productions API**
 
-> **We're aware that the ABQ Open Dataset has been timing out.** We have a download of the dataset from 03/19/2020. Of course, this dataset won't dynamically update or have any endpoint filtering. If you're having issues, please use this as an alternative: [https://c2t-cabq-open-data.s3.amazonaws.com/film-locations-json-all-records_03-19-2020.json](https://c2t-cabq-open-data.s3.amazonaws.com/film-locations-json-all-records_03-19-2020.json).
+Return the productions in the desired structure and in JSON format.
 
-```
-{
-    count: 1,
-    productions: [
-        {
-            title: "production name",
-            type: "movie, tv or other",
-            sites: [
-                {
-                    name: "site name",
-                    shoot_date: "Month Date, Year"
-                }
-            ]
-        }
-    ]
-}
-```
+* **URL**
 
-2) Create a simple front end that: 
+  /api/productions
 
-- Displays all data to user -- just a bulleted list is fine
-- Display date in a human readable format in your timezone
+* **Method:**
 
-There is a start at `routes/web.php` and `resources/views/show.blade.php`.
+  `GET`
+  
+*  **URL Params**
 
-That's it! 
+   **Required:**
+ 
+   `from=[date]`
+   
+   Format: YYYY-MM-DD
 
+   **Required:**
+ 
+   `to=[date]`
+   
+   Format: YYYY-MM-DD
 
-# AWS Test
-If you are applying for a role that includes some operations responsibilities, deploy the PHP app that you created above on AWS. We'll create an account for you and send over the credentials. With that AWS account: 
+* **Success Response:**
 
-1. Create a key pair
-2. Launch an EC2 instance in eu-central-1 region
-3. Login to that instance via ssh
-4. Clone your app's git repo
-5. Run the PHP app and serve requests
-6. Securely send us the .pem file
+    **Code:** 200 
+    
+    **Content-Type:** `application/json`
+    
+    **Body:** `{
+    	"count": 1,
+    	"productions": [{
+    		"title": "$5 a Day",
+    		"type": "Movie",
+    		"sites": [{
+    			"name": "Chevron",
+    			"shoot_dates": ["September 12, 2007"]
+    		}, {
+    			"name": "Stag Tobacconist",
+    			"shoot_dates": ["September 12, 2007"]
+    		}]
+    	}]
+    }`
+ 
+* **Error Response:**
+
+    **Code:** 422 
+    
+    **Content-Type:** `application/json`
+    
+    **Body:** `{
+    	"errors": {
+    		"from": ["The from does not match the format Y-m-d."]
+    	}
+    }`
+
+**Productions View**
+
+Render the productions view which is a simple bulleted layout.
+
+* **URL**
+
+  /productions
+
+* **Method:**
+
+  `GET`
+  
+*  **URL Params**
+
+   **Required:**
+ 
+   `from=[date]`
+   
+   Format: YYYY-MM-DD
+
+   **Required:**
+ 
+   `to=[date]`
+   
+   Format: YYYY-MM-DD
+
+*  **Content-Type:** `text/html`
+
+# Todos
+- Response parsing performance
+- HTTP request caching
+- HTTP client env variables for config
+- Optional from / to parameters with min / max constraints

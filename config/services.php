@@ -29,5 +29,21 @@ return [
         'secret' => env('AWS_SECRET_ACCESS_KEY'),
         'region' => env('AWS_DEFAULT_REGION', 'us-east-1'),
     ],
+	'api' => [
+		'services' => [
+			'productions' => [
+				'url' => env('PRODUCTIONS_API_URI'),
+				'headers' => ['User-Agent' => 'Reconnect/ProductionService']
+			]
+		],
+		'client' => [
+			'http_errors' => false,
+			'connect_timeout' => 60,
+			'timeout' => 60,
+			'max_retries' => 5,
+			'retry_delay' => 50,
+			'verify' => false
+		]
+	]
 
 ];
