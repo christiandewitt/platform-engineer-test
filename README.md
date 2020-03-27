@@ -17,7 +17,7 @@ Environmental Variables that need to be set:
 
 | Variable | Description |
 | ------ | ------ |
-| PRODUCTIONS_API_URI | URI to the productions data source |
+| PRODUCTIONS_API_URI | **Base URI** to the productions data source e.g. `https://c2t-cabq-open-data.s3.amazonaws.com` |
 
 **Please note:**
 - There is an .env.example file
